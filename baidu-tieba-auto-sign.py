@@ -22,6 +22,8 @@ if sys.getdefaultencoding() != defaultencoding:
 
 user = ""
 password = ""
+
+cookie_get = ""
 BDUSS = ""
 
 if os.path.exists('conf.ini'):
@@ -64,6 +66,7 @@ bdData = {
 
 
 def get_cookie_and_bduss():
+    global cookie_get, BDUSS
     cookie = cookielib.CookieJar()
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie))
     try:
@@ -83,29 +86,57 @@ def get_cookie_and_bduss():
         print("网络问题 无法为您获取token,正在退出...")
         return
     #login
-    request = urllib2.Request(LOGIN_URL, headers=loginHeaders, data=urllib.urlencode(bdData).encode('utf-8'))
+    data = urllib.urlencode(bdData)
+    request = urllib2.Request(LOGIN_URL, headers=loginHeaders, data=data)
     print "正在为 %s 进行登录操作" % user
-    try:
-        result = opener.open(request).read()
-        # result = json.loads(opener.open("http://tieba.baidu.com/f/user/json_userinfo").read().decode("utf-8"))
-        result = json.loads(opener.open("http://tieba.baidu.com/f/user/json_userinfo").read().decode("ISO-8859-1"))
+    result = opener.open(request)
 
-    except:
-        print("遇到问题,无法登录,正在退出...")
-        return
-    # result = json.loads(opener.open("http://tieba.baidu.com/f/user/json_userinfo").read().decode("utf-8"))
-    result = json.loads(opener.open("http://tieba.baidu.com/f/user/json_userinfo").read().decode("ISO-8859-1"))
-
-    if result["no"] == 0:
-        print(user + "登录成功!")
+    cookiesToCheck_dir = {'BDUSS':'', 'PTOKEN':'', 'STOKEN':'', 'SAVEUSERID':''}
+    cookiesToCheck_list = ['BDUSS', 'PTOKEN', 'STOKEN', 'SAVEUSERID']
+    # print cookie, 4
+    success = True
+    for ck in cookiesToCheck_list:
+        for ck_1 in cookie:
+            if ck_1.name == ck:
+                cookiesToCheck_dir[ck] = True
+    for ck in cookiesToCheck_list:
+        if not cookiesToCheck_dir[ck]:
+            success = False
+    print user + "登录成功!"
         # print cookie
-        for ck in cookie:
-            if ck.name == 'BDUSS':
-                BDUSS = ck.value 
-                # print BDUSS
-    return cookie,BDUSS
-
-
+    for ck in cookie:
+        if ck.name == 'BDUSS':
+            BDUSS = ck.value 
+            # print BDUSS
+            cookie_get = cookie
+    print cookie
+    print BDUSS
+    
+    # try:
+    #     result = opener.open(request).read()
+    #     # print result, 1
+    #     # result = json.loads(opener.open("http://tieba.baidu.com/f/user/json_userinfo").read().decode("utf-8"))
+    #     result = json.loads(opener.open("http://tieba.baidu.com/f/user/json_userinfo").read().decode("ISO-8859-1"))
+    #     # print result, 2
+    # except:
+    #     print("遇到问题,无法登录,正在退出...")
+    #     return
+    # # result = json.loads(opener.open("http://tieba.baidu.com/f/user/json_userinfo").read().decode("utf-8"))
+    # result = json.loads(opener.open("http://tieba.baidu.com/f/user/json_userinfo").read().decode("ISO-8859-1"))
+    # # print result, 3
+    # while not result:
+    #     result = json.loads(opener.open("http://tieba.baidu.com/f/user/json_userinfo").read().decode("ISO-8859-1"))
+    #     print 4
+    # if result["no"] == 0:
+    #     print(user + "登录成功!")
+    #     # print cookie
+    #     for ck in cookie:
+    #         if ck.name == 'BDUSS':
+    #             BDUSS = ck.value 
+    #             # print BDUSS
+    #             cookie_get = cookie
+    # print cookie_get
+    # print BDUSS
 
 
 
@@ -252,8 +283,11 @@ def sign(cookie, BDUSS):
 
 
 def main():
-    ck,bdu = get_cookie_and_bduss()
-    sign(ck, bdu)
+    while not cookie_get:
+        get_cookie_and_bduss()
+
+    # ck,bdu = get_cookie_and_bduss()
+    sign(cookie_get, BDUSS)
 
 if __name__ == "__main__":
     system_env = True

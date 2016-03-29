@@ -49,8 +49,8 @@ pip install -r requirements.txt
 
 ```
 [main]
-username=QQ账号
-password=QQ密码
+username=账号
+password=密码
 ```
 
 或者

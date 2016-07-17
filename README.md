@@ -69,6 +69,8 @@ python sign.py
 python baidu-tieba-auto-sign.py
 ```
 
+***提示：如果用错误的用户名或密码进行模拟客户端签到失败，改正后，需要过几个小时再次运行才能正常签到***
+
 ## 参考代码
 
 参考并整合了[baidu-tieba-auto-sign](https://github.com/skyline75489/baidu-tieba-auto-sign)和[Tieba-autoSign](https://github.com/Hjyheart/Tieba-autoSign)

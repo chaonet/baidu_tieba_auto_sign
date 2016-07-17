@@ -88,3 +88,12 @@ python baidu-tieba-auto-sign.py
 [baidu-tieba-auto-sign](https://github.com/skyline75489/baidu-tieba-auto-sign)调用并获取返回的`Cookie`和`BDUSS`作为输入函数，并适当修改 HTTP 头部，测试，成功。
 
 最终，实现只需在配置文件`conf.ini`中保存用户名和密码，可以自动获取`Cookie`和`BDUSS`，并模拟客户端进行批量签到。
+
+== update 20160717 ==
+
+有人提 issue 说，错误的密码也会提示登陆成功，并且进入死循环  
+于是直接改错密码，进行登陆，失败  
+接着用正确密码登陆，还是失败？！  
+以为获取 cookie 的方法不行了，折腾了几个小时  
+
+最后发现，用错误密码后，会有几个小时正确密码也无法登陆
